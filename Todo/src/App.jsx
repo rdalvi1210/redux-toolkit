@@ -1,14 +1,23 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addTodo } from "./redux/slices/TodoSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addTodo, deleteTodo } from "./redux/slices/TodoSlice"; // ✅ import deleteTodo
 
 function App() {
   const dispatch = useDispatch();
+  const todos = useSelector((state) => state.todo.todos);
   const [text, setText] = useState("");
+
   const handleTodo = () => {
-    dispatch(addTodo(text));
-    setText("");
+    if (text.trim()) {
+      dispatch(addTodo(text));
+      setText("");
+    }
   };
+
+  const handleDelete = (id) => {
+    dispatch(deleteTodo(id));
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6">
@@ -23,7 +32,7 @@ function App() {
             className="flex-grow px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <button
-            onClick={() => handleTodo()}
+            onClick={handleTodo}
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
           >
             Add
@@ -31,14 +40,20 @@ function App() {
         </div>
 
         <ul className="space-y-2">
-          <li className="flex justify-between items-center bg-gray-100 px-4 py-2 rounded">
-            <span>Sample Task 1</span>
-            <button className="text-red-500 hover:text-red-700">❌</button>
-          </li>
-          <li className="flex justify-between items-center bg-gray-100 px-4 py-2 rounded">
-            <span>Sample Task 2</span>
-            <button className="text-red-500 hover:text-red-700">❌</button>
-          </li>
+          {todos.map((todo) => (
+            <li
+              key={todo.id}
+              className="flex justify-between items-center bg-gray-100 px-4 py-2 rounded"
+            >
+              <span>{todo.text}</span>
+              <button
+                onClick={() => handleDelete(todo.id)} // ✅ delete on click
+                className="text-red-500 hover:text-red-700"
+              >
+                ❌
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

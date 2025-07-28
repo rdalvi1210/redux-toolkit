@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = { todos: [{ id: 0, text: "Hello world" }] };
+const initialState = {
+  todos: [{ id: 0, text: "Hello world" }],
+};
 
 export const TodoSlice = createSlice({
   name: "todos",
@@ -8,14 +10,19 @@ export const TodoSlice = createSlice({
   reducers: {
     addTodo: (state, action) => {
       const todo = {
-        id: 1,
+        id: Date.now(), // ✅ avoid hardcoded id
         text: action.payload,
       };
       state.todos.push(todo);
     },
+
+    deleteTodo: (state, action) => {
+      state.todos = state.todos.filter((todo) => todo.id !== action.payload);
+    },
   },
 });
 
-export const { addTodo } = TodoSlice.actions;
+// ✅ Export both actions
+export const { addTodo, deleteTodo } = TodoSlice.actions;
 
 export default TodoSlice.reducer;
